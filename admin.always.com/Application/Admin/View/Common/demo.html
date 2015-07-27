@@ -1,0 +1,228 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dream后台管理</title>
+    <!-- Bootstrap Styles-->
+    <link href="__CSS__/bootstrap.css" rel="stylesheet" />
+    <!-- FontAwesome Styles-->
+    <link href="__CSS__/font-awesome.css" rel="stylesheet" />
+    <!-- Custom Styles-->
+    <link href="__CSS__/custom-styles.css" rel="stylesheet" />
+    <!-- Google Fonts-->
+    <block name='css'></block>
+</head>
+<body>
+    <div id="wrapper">
+        <nav class="navbar navbar-default top-navbar" role="navigation">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".sidebar-collapse">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span> 
+                </button>
+                <a class="navbar-brand" href="{:U('Index/index')}">Dream</a>
+            </div>
+
+            <ul class="nav navbar-top-links navbar-right">
+                <li class="dropdown">
+                    <a class="dropdown-toggle" data-toggle="dropdown" href="#" aria-expanded="false"> <i class="fa fa-envelope fa-fw"></i> <i class="fa fa-caret-down"></i>
+                    </a>
+                    <ul class="dropdown-menu dropdown-messages">
+                        <li>
+                            <a href="#">
+                                <div> <strong>John Doe</strong>
+                                    <span class="pull-right text-muted"> <em>Today</em>
+                                    </span>
+                                </div>
+                                <div>
+                                    Lorem Ipsum has been the industry's standard dummy text ever since the 1500s...
+                                </div>
+                            </a>
+                        </li>
+                        <li class="divider"></li>
+                        <li>
+                            <a class="text-center" href="#">
+                                <strong>Read All Messages</strong>
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+                        </li>
+                    </ul>
+                    <!-- /.dropdown-messages --> </li>
+                <!-- /.dropdown -->
+                <li class="dropdown">
+                    <a class="dropdown-toggle" data-toggle="dropdown" href="#" aria-expanded="false">
+                        <i class="fa fa-tasks fa-fw"></i>
+                        <i class="fa fa-caret-down"></i>
+                    </a>
+                    <ul class="dropdown-menu dropdown-tasks">
+                        <li>
+                            <a href="#">
+                                <div>
+                                    <p>
+                                        <strong>Task 1</strong>
+                                        <span class="pull-right text-muted">60% Complete</span>
+                                    </p>
+                                    <div class="progress progress-striped active">
+                                        <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: 60%">
+                                            <span class="sr-only">60% Complete (success)</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </a>
+                        </li>
+                        <li class="divider"></li>
+                        <li>
+                            <a class="text-center" href="#">
+                                <strong>See All Tasks</strong>
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+                        </li>
+                    </ul>
+                    <!-- /.dropdown-tasks --> </li>
+                <!-- /.dropdown -->
+                <li class="dropdown">
+                    <a class="dropdown-toggle" data-toggle="dropdown" href="#" aria-expanded="false">
+                        <i class="fa fa-bell fa-fw"></i>
+                        <i class="fa fa-caret-down"></i>
+                    </a>
+                    <ul class="dropdown-menu dropdown-alerts">
+                        <li>
+                            <a href="#">
+                                <div>
+                                    <i class="fa fa-comment fa-fw"></i>
+                                    New Comment
+                                    <span class="pull-right text-muted small">4 min</span>
+                                </div>
+                            </a>
+                        </li>
+                        <li class="divider"></li>
+                        <li>
+                            <a class="text-center" href="#">
+                                <strong>See All Alerts</strong>
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+                        </li>
+                    </ul>
+                    <!-- /.dropdown-alerts --> </li>
+                <!-- /.dropdown -->
+                <li class="dropdown">
+                    <a class="dropdown-toggle" data-toggle="dropdown" href="#" aria-expanded="false">
+                        <i class="fa fa-user fa-fw"></i>
+                        <i class="fa fa-caret-down"></i>
+                    </a>
+                    <ul class="dropdown-menu dropdown-user">
+                        <li>
+                            <a href="{:U('Admin/changePassword')}">
+                                <i class="fa fa-user fa-fw"></i>
+                                修改密码
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#">
+                                <i class="fa fa-gear fa-fw"></i>
+                                Settings
+                            </a>
+                        </li>
+                        <li class="divider"></li>
+                        <li>
+                            <a href="{:U('Admin/logout')}">
+                                <i class="fa fa-sign-out fa-fw"></i>
+                                注销
+                            </a>
+                        </li>
+                    </ul>
+                    <!-- /.dropdown-user --> </li>
+                <!-- /.dropdown --> </ul>
+        </nav>
+        <!--/. NAV TOP  -->
+        <nav class="navbar-default navbar-side" role="navigation">
+            <div class="sidebar-collapse">
+                <ul class="nav" id="main-menu">
+                    <li>
+                        <a href="{:U('Index/index')}">
+                            <i class="fa fa-dashboard"></i>
+                            主页
+                        </a>
+                    </li>
+                    <volist name='menuList' id='menu'>
+                        <eq name="menu.level" value="1">
+                            <li>
+                                <a href="#">
+                                    <i class="fa fa-bar-chart-o"></i>
+                                    {$menu.name}
+                                    <span class="fa arrow"></span>
+                                </a>
+                                <ul class="nav nav-second-level">
+                                    <volist name='menuList' id='menu_child'>
+                                        <eq name='menu_child.parent_id' value='$menu["id"]'>
+                                            <empty name='menu_child["url"]'>
+                                                <li>
+                                                    <a href="#">{$menu_child.name}<span class="fa arrow"></span></a>
+                                                
+                                                <ul class="nav nav-third-level">
+                                                    <volist name='menuList' id='third'>
+                                                        <eq name='third.parent_id' value='$menu_child["id"]'>
+                                                            <li>
+                                                                <a href="{:U($third['url'])}">{$third.name}</a>
+                                                            </li>
+                                                        </eq>
+                                                    </volist>
+                                                </ul></li>
+                                            <else />
+                                                <li>
+                                                    <a href="{:U($menu_child['url'])}" value='111'>{$menu_child.name}</a>
+                                                </li>
+                                            </empty>
+                                        </eq>
+                                    </volist>
+                                </ul>
+                            </li>
+                        </eq>
+                    </volist>
+                    <li>
+                        <a href="empty.html">
+                            <i class="fa fa-fw fa-file"></i>
+                            Empty Page
+                        </a>
+                    </li>
+                </ul>
+
+            </div>
+
+        </nav>
+        <!-- /. NAV SIDE  -->
+        <div id="page-wrapper" >
+            <div id="page-inner">
+                <!--main模板开始  -->
+                <block name='main'>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <h1 class="page-header">
+                                Empty Page
+                                <small>Create new page.</small>
+                            </h1>
+                        </div>
+                    </div>
+                </block>
+                <!--main模板结束  -->
+                <!-- /. PAGE INNER  --> </div>
+            <!-- /. PAGE WRAPPER  --> </div>
+        </div>
+        <!-- /. WRAPPER  -->
+        <!-- JS Scripts-->
+        <!-- jQuery Js -->
+        <!--   // <script type="text/javascript" src="__JS__/jquery-1.11.2.min.js"></script>
+    -->
+    <block name='js'></block>
+
+    <!-- Bootstrap Js -->
+    <script src="__JS__/bootstrap.min.js"></script>
+    <!-- Metis Menu Js -->
+    <script src="__JS__/jquery.metisMenu.js"></script>
+    <!-- Custom Js -->
+    <script src="__JS__/custom-scripts.js"></script>
+</body>
+</html>

@@ -1,0 +1,133 @@
+<extend name="Common:demo" />
+<block name='css'>
+    <link rel="stylesheet" href="__ZTREE__/zTreeStyle.css" type="text/css">
+    <style type="text/css">
+        ul.ztree {
+          margin-top: 10px;
+          border: 1px solid #617775;
+          background: #f0f6e4;
+          width: 220px;
+          height: 360px;
+          overflow-y: scroll;
+          overflow-x: auto;
+        }
+    </style>
+</block>
+<block name='main'>
+    <div class="row">
+        <div class="col-md-12">
+            <h1 class="page-header">
+                Forms Page
+                <small class='title'>权限编辑</small>
+            </h1>
+        </div>
+    </div>
+    <div class="panel-body">
+        <div class="alert alert-success" style="display:none"> <strong>操作成功!</strong> <em class='success_msg'>You successfully read this important alert message.</em>
+        </div>
+        <div class="alert alert-danger" style="display:none"> <strong>操作失败!</strong> <em class='error_msg'>Change a few things up and try submitting again.</em>
+        </div>
+        <form action='{:U()}' method="post">
+            <input type="hidden" name="id" value="{$id}">
+            <div class="form-group">
+                <label>权限名称:</label>
+                <input class="form-control" placeholder="请输入权限名称" name='name' value="{$name}"></div>
+            <div class="form-group">
+                <label>权限地址:</label>
+                <input class="form-control" placeholder="请输入权限地址" name='url' value="{$url}"></div>
+            <div class="form-group">
+                <label>父权限:</label>
+                <input class="form-control parent_name" disabled value="">
+                <input class="form-control parent_id" name="parent_id" value="{$parent_id}" style="display:none">
+                <ul id="ztree-me" class='ztree'></ul>
+            </div>
+            <div class="form-group">
+                <label>描述:</label>
+                <textarea class="form-control" rows="3" name="intro">{$intro}</textarea>
+            </div>
+            <div class="form-group">
+                <label>状态:</label>
+                <label class="radio-inline">
+                    <input type="radio" name="status" class="optionsRadiosInline1 status" value="1">是</label>
+                <label class="radio-inline">
+                    <input type="radio" name="status" class="optionsRadiosInline1 status" value="0">否</label>
+            </div>
+            <div class="form-group">
+                <label>排序:</label>
+                <input class="form-control" placeholder="请输入排序" name='sort' value="{$sort|default=10}"></div>
+            <button type="submit" class="btn btn-default post_json">提交</button>
+        </form>
+    </div>
+    <script type="text/javascript" src="__JS__/jquery-1.11.2.min.js"></script>
+    <script type="text/javascript" src="__ZTREE__/jquery.ztree.core-3.5.min.js"></script>
+    <script type="text/javascript">
+        $(function(){
+           $('.status').val([{$status|default=1}]);
+
+       //>>1.ztree设置
+        var setting = {
+            data: {
+                simpleData: {
+                    enable: true,
+                    pIdKey: "parent_id",
+                }
+            },
+            callback: {
+                onClick: function(event, treeId, treeNode){
+                    $('.parent_name').val(treeNode.name);
+                    $('.parent_id').val(treeNode.id);
+                }
+            }
+        };
+        //>>2.接受树中de数据
+        var zNodes = {$rows};
+        var zt=$.fn.zTree;
+        var z=zt.init($("#ztree-me"), setting, zNodes);
+    <empty name='id'>
+        // console.debug($("#ztree-me"));
+        z.expandAll(true); //全部展开
+        // //选择第一个节点.
+        var nodes = z.getNodes();
+        if (nodes.length>0) {
+            z.selectNode(nodes[0]);
+            $('.parent_name').val(nodes[0].name);
+            $('.parent_id').val(nodes[0].id);
+        }
+    <else />
+
+        var parent_id={$parent_id};
+        var parent_node=z.getNodeByParam('id', parent_id);
+        z.selectNode(parent_node);
+        $('.parent_name').val(parent_node.name);
+        $('.parent_id').val(parent_node.id);  //真正提交给服务器的父分类id
+    </empty> 
+
+
+         //>>添加post_json请求的响应
+          $('.post_json').click(function(){
+            var form_data=$(this).closest('form').serialize();
+            var url=$(this).closest('form').attr('action');
+            // console.debug(form_data);
+            $.post(url,form_data,function(data){
+              // console.debug(data);
+              if(data.status==0){
+                $('.error_msg').html(data.info);
+                $('.alert-danger').show();
+                setTimeout(function(){
+                  $('.alert-danger').hide();
+                },1500);
+              }else{
+                $('.success_msg').html(data.info);
+                $('.alert-success').show();
+                setTimeout(function(){
+                  location.href=data.url;
+                },1500)
+              }
+            });
+            return false;
+          });
+          
+        });
+    </script>
+    
+</block>

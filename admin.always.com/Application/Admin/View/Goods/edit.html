@@ -1,0 +1,596 @@
+<extend name="Common:demo" />
+<block name='css'>
+    <link rel="stylesheet" href="__ZTREE__/zTreeStyle.css" type="text/css">
+    <style type="text/css">
+        .uploadify{
+            background-color:#73b93d;
+        }
+        ul.ztree {
+          margin-top: 10px;
+          border: 1px solid #617775;
+          background: #f0f6e4;
+          width: 380px;
+          height: auto;
+          overflow-y: scroll;
+          overflow-x: auto;
+        }
+    </style>
+    </block>
+<block name='main'>
+	<div class="row">
+        <div class="col-md-12">
+            <h1 class="page-header">
+                Forms Page <small class='title'>商品表编辑</small>
+            </h1>
+        </div>
+
+    </div> 
+    <ul class="nav nav-tabs">
+        <li class="active"><a href="#base" data-toggle="tab">基本信息</a>
+        </li>
+        <li class=""><a href="#intro" data-toggle="tab">详细描述</a>
+        </li>
+        <li class=""><a href="#other" data-toggle="tab">会员价格</a>
+        </li>
+        <li class=""><a href="#attribute" data-toggle="tab">商品属性</a>
+        </li>
+        <li class=""><a href="#album" data-toggle="tab">商品相册</a>
+        </li>
+        <li class=""><a href="#article" data-toggle="tab">相关文章</a>
+        </li>
+    </ul>
+	<div class="panel-body">
+        <div class="alert alert-success" style="display:none">
+          <strong>操作成功!</strong><em class='success_msg'> You successfully read this important alert message.</em>
+        </div>
+        <div class="alert alert-danger" style="display:none">
+          <strong>操作失败!</strong><em class='error_msg'> Change a few things up and try submitting again.</em>
+        </div>
+    <form action='{:U()}' method="post">
+        <input type="hidden" name="id" value="{$id}">
+    <div class="tab-content">
+        <!-- 第一个表单table-开始 -->
+            <div class="tab-pane fade active in" id="base">
+                <div class="form-group input-group">
+                    <span class="input-group-addon">商品名称:</span>
+                    <input class="form-control" placeholder="请输入商品名称" name="name" value="{$name}">
+                </div>
+                <div class="form-group input-group">
+                    <span class="input-group-addon">商品图片:</span>
+                    <input type="hidden" name="logo" value="{$logo}" id="logo">
+                    <input type="file" class="form-control" id='upload_logo'>
+                </div>
+                <div class="form-group input-group">
+                    <div class="upload-img-box" style="display:none">
+                        <div class="upload-pre-item">
+                            <img src="__GOODS__/{$logo}!m" style="width:300px">
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group input-group">
+                    <span class="input-group-addon">商品分类:</span>
+                    <input class="form-control cat_name" disabled value="">
+                    <input class="form-control cat_id" name="goods_category_id" value="{$goods_category_id}" style="display:none">
+                </div>
+                <div class="form-group input-group">
+                    <ul id="ztree-me" class='ztree'></ul>
+                </div>
+                <div class="form-group input-group">
+                    <span class="input-group-addon">&nbsp;供应商:</span>
+                    {:arr2select($supList,'supplier_id',$supplier_id)}
+                </div>
+                <div class="form-group input-group">
+                    <span class="input-group-addon">商品品牌:</span>
+                    {:arr2select($brandList,'brand_id',$brand_id)}
+                </div>
+                <div class="form-group input-group">
+                    <span class="input-group-addon">&nbsp;市场价:</span>
+                    <input class="form-control" name="market_price" value="{$market_price}">
+                </div>
+                <div class="form-group input-group">
+                    <span class="input-group-addon">&nbsp;本店价:</span>
+                    <input class="form-control" name="shop_price" value="{$shop_price}">
+                </div>
+                <div class="form-group">
+                    <label>是否上架:</label>
+                    <label class="radio-inline">
+                        <input type="radio" name="is_on_sale" class="optionsRadiosInline1" value="1">是</label>
+                    <label class="radio-inline">
+                        <input type="radio" name="is_on_sale" class="optionsRadiosInline1" value="0">否</label>
+                </div>
+                <div class="form-group">
+                    <label>商品状态:</label>
+                    <label class="checkbox-inline">
+                        <input type="checkbox" class="goods_status" name="goods_status[]" value="1">疯狂抢购
+                    </label>
+                    <label class="checkbox-inline">
+                        <input type="checkbox" class="goods_status" name="goods_status[]" value="2">热卖商品
+                    </label>
+                    <label class="checkbox-inline">
+                        <input type="checkbox" class="goods_status" name="goods_status[]"  value="4">推荐商品
+                    </label>
+                    <label class="checkbox-inline">
+                        <input type="checkbox" class="goods_status" name="goods_status[]"  value="8">新品上架
+                    </label>
+                    <label class="checkbox-inline">
+                        <input type="checkbox" class="goods_status" name="goods_status[]"  value="16">猜您喜欢
+                    </label>
+                </div>
+                <div class="form-group">
+                    <label>是否显示:</label>
+                    <label class="radio-inline">
+                        <input type="radio" name="status" class="optionsRadiosInline1" value="1">是</label>
+                    <label class="radio-inline">
+                        <input type="radio" name="status" class="optionsRadiosInline1" value="0">否</label>
+                </div>
+                <div class="form-group input-group">
+                    <span class="input-group-addon">&nbsp;排&nbsp;序:</span>
+                    <input class="form-control" name="sort" value="{$sort|default=20}">
+                </div>
+            </div>
+        <!-- 第一个表单table-结束 -->
+        <!-- 第二个表单table-开始 -->
+            <div id="intro" class="tab-pane fade">
+                <script id="intro-text" name="intro" type="text/plain">{$intro}</script>
+            </div>
+        <!-- 第二个表单table-结束 -->
+        <!-- 第三个表单table-开始 -->
+            <div class="tab-pane fade" id="other">
+                <volist name='MemberLevelList' id='member'>
+                    <div class="form-group input-group">
+                        <span class="input-group-addon">{$member.name}:</span>
+                        <input class="form-control" placeholder="请输入{$member.name}购买价格" name="memberPrice[{$member.id}]" value="{$goodsMemberPrices[$member['id']]}">
+                    </div>
+                </volist>
+            </div>
+        <!-- 第三个表单table-结束 -->
+        <!-- 第四个表单table-开始 -->
+            <div class="tab-pane fade" id="attribute">
+                <div class="panel-group" id="accordion">
+                                <div class="panel panel-default">
+                                    <div class="panel-heading">
+                                        <h4 class="panel-title">
+                                            <label>请选择商品类型:</label>
+                                            {:arr2select($goodsTypeList,'goods_type_id',$goods_type_id)}
+                                        </h4>
+                                    </div>
+                                </div>
+                                <div class="panel panel-default">
+                                    <div class="panel-heading">
+                                        <h4 class="panel-title">
+                                            <a data-toggle="collapse" data-parent="#accordion" class='attr_title' href="#collapseTwo">请选择商品类型</a>
+                                        </h4>
+                                    </div>
+                                    <div id="collapseTwo" class="panel-collapse in" style="height: auto;">
+                                        <div class="panel-body attr_content">
+                                            
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+            </div>
+        <!-- 第四个表单table-结束 -->
+        <style type="text/css">
+            .img{
+                position: relative;
+            }
+            .img a{
+                position: absolute;
+                width:10px;
+                top: 5px;
+                right: 5px;
+            }
+        </style>
+        <!-- 第五个表单table-开始 -->
+            <div class="tab-pane fade" id="album">
+                <div >
+                    <span class="input-group-addon">商品相册</span>
+                    <input type="file" id='upload_gallery'>
+                </div>
+                <div class="row" id='gallery'>
+                    <volist name="goodsGallery" id='ga'>
+                        <div class="col-md-3 col-sm-12 col-xs-12 gallery_div">
+                            <div class="panel panel-primary text-center no-boder bg-color-green">
+                                <div class="panel-body img">
+                                    <img class="fa fa-bar-chart-o fa-5x" src="__GOODS__/{$ga.path}!m">
+                                    <a dbid='{$ga.id}'>X</a>
+                                </div>
+                            </div>
+                        </div>
+                    </volist>
+                </div>
+            </div>
+        <!-- 第五个表单table-结束 -->
+        <!-- 第六个表单table-开始 -->
+            <div class="tab-pane fade" id="article">
+                <div class="form-group input-group">
+                        <span class="input-group-addon">搜索</span>
+                        <input type="text" class="form-control article_search" placeholder="请输入文章名">
+                    </div>
+                    <div class="row">
+                    <div class="col-md-5 col-sm-5">
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                文章列表
+                            </div>
+                                <select multiple="" class="form-control all_select" style="width:100%" size="10">
+                                </select>
+                        </div>
+                    </div>
+                    <div class="col-md-1 col-sm-5" style="margin:66px 0;">
+                        <input class='allToRight' type="button" value=">>">
+                        <input class='oneToRight' type="button" value=" >">
+                        <input class='oneToLeft' type="button" value="< ">
+                        <input class='allToLeft' type="button" value="<<">
+                    </div>
+                    <div class="col-md-5 col-sm-5">
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                已选文章
+                            </div>
+                                <select multiple="" class="form-control right_selected" style="width:100%" size="10">
+                                <volist name='goodsArticleList' id='goods_article'>
+                                    <option value="{$goods_article.article_id}">{$goods_article.article_name}</option>
+                                </volist>
+                                </select>
+                        </div>
+                    </div>
+                    <div class="hidden_article">
+                        <volist name='goodsArticleList' id='goods_article'>
+                            <input type="hidden" name="article_id[]" value="{$goods_article.article_id}">
+                        </volist>
+                    </div>
+                </div>
+            </div>
+        <!-- 第六个表单table-结束 -->
+    </div>
+    <button type="submit" class="btn btn-default">提 交</button>
+    </form>
+		
+		
+	</div>
+</block>
+<block name='js'>
+	<script type="text/javascript" src="__JS__/jquery-1.11.2.min.js"></script>
+    <script type="text/javascript" src="__UPLOADIFY__/jquery.uploadify.min.js"></script>
+    <script type="text/javascript" src="__ZTREE__/jquery.ztree.core-3.5.min.js"></script>
+    <!-- ueditor配置文件 -->
+    <script type="text/javascript" src="__UEDITOR__/ueditor.config.js"></script>
+    <!-- ueditor编辑器源码文件 -->
+    <script type="text/javascript" src="__UEDITOR__/ueditor.all.js"></script>
+	<script type="text/javascript">
+		$(function(){
+            //点击商品类型，组合出不同的商品属性
+            $('.goods_type_id').change(function(){
+                $('.attr_title').text($('.goods_type_id option:selected').text()+"的属性");
+
+                $.get("{:U('Attribute/getAttribute')}",{'goods_type_id':this.value},function(data){
+                    var attr_html = '';
+                    $(data).each(function(){
+                        if(this.attribute_type == 1){
+                            if(this.input_type == 1){
+                                attr_html += this.name+": <input type='text' name='attribute["+this.id+"]' /><br />";
+                            }else if(this.input_type == 2){
+                                attr_html += this.name+":<select name='attribute["+this.id+"]'>";
+                                for(var i in this.option_values){
+                                    attr_html += "<option value='"+this.option_values[i]+"'>"+this.option_values[i]+"</option>";
+                                }
+                                attr_html+="</select><br />";
+                            }else if(this.input_type == 3){
+                                attr_html += this.name+":<textarea name='attribute["+this.id+"]'></textarea><br />";
+                            }
+                        }else{
+                            attr_html+=this.name+":";
+                            for(var i in this.option_values){
+                                attr_html += "<input type='checkbox' name='attribute["+this.id+"][]' value='"+this.option_values[i]+"'/>"+this.option_values[i]+"&nbsp;";
+                                    
+                            }
+                            attr_html+="<br />";
+                        }
+                    });
+                    $('.attr_content').html(attr_html);
+                });
+            });
+
+
+
+
+			$('.optionsRadiosInline1').val([{$status|default=1}]);
+            
+            $('.article_search').on('keyup',function(){
+                var kw=$.trim(this.value);
+                if(kw){
+                    $.getJSON("{:U('Article/searchArticle')}",{'kw':kw},function(data){
+                        $('.all_select').html('');
+                        $(data).each(function(){
+                            $('.all_select').append("<option value='"+this.id+"'>"+this.name+"</option>");
+                        });
+                    });
+                }
+            });
+            //双击选中到已选文章,已存在的不选中
+            $('.all_select').on('dblclick','option',function(){
+                var right_opts=$('.right_selected option');
+                for(var i in right_opts){
+                    var right_opt=right_opts[i];
+                    if(right_opt.value==this.value){
+                        return ;
+                    }
+                }
+                $('.right_selected').append(this);
+                toHideInput();
+            });
+            //双击已选择文章,如果存在文章列表,直接删除,更新隐藏表单
+            $('.right_selected').on('dblclick','option',function(){
+                var left_opts=$('.all_select option');
+                for(var i in left_opts){
+                    var left_opt=left_opts[i];
+                    if(left_opt.value==this.value){
+                        $(this).remove();
+                        toHideInput();
+                        return ;
+                    }
+                }
+                $('.all_select').append(this);
+                toHideInput();
+            });
+            //文章列表所有选项添加到已选列表
+            $('.allToRight').on('click',function(){
+                var left_opts=$('.all_select option');
+                var right_opts=$('.right_selected option');
+                for(var j in left_opts){
+                    var left_opt=left_opts[j];
+                    for(var i in right_opts){
+                        var right_opt=right_opts[i];
+                        if(right_opt.value==left_opt.value){
+                            return ;
+                        }
+                    }
+                    $('.right_selected').append(left_opt);                 
+                    toHideInput();
+                }
+            });
+            //将选中的从全部文章移动到已选文章
+            $('.oneToRight').on('click',function(){
+                var right_opts=$('.right_selected option');
+                var left_selected_opts=$('.all_select>option:selected');
+                for(var j in left_selected_opts){
+                    var left_opt=left_selected_opts[j];
+                    for(var i in right_opts){
+                        var right_opt=right_opts[i];
+                        if(right_opt.value==left_opt.value){
+                            return ;
+                        }
+                    }
+                    $('.right_selected').append(left_opt);                 
+                    toHideInput();
+                }
+            });
+            //将选中的从已选文章移动到全部文章
+            $('.oneToLeft').on('click',function(){
+                var right_opts=$('.right_selected>option:selected');
+                var left_opts=$('.all_select option');
+                for(var j in right_opts){
+                    var right_opt=right_opts[j];
+                    for(var i in left_opts){
+                        var left_opt=left_opts[i];
+                        if(right_opt.value==left_opt.value){
+                            $(right_opt).remove();
+                            toHideInput();
+                            return ;
+                        }
+                    }
+                    // console.debug(right_opt);
+                    $('.all_select').append(right_opt);                 
+                    toHideInput();
+                }
+            });
+            $('.allToLeft').on('click',function(){
+                var left_opts=$('.all_select option');
+                var right_opts=$('.right_selected option');
+                for(var j in right_opts){
+                    var right_opt=right_opts[j];
+                    for(var i in left_opts){
+                        var left_opt=left_opts[i];
+                        if(right_opt.value==left_opt.value){
+                            $(right_opt).remove();
+                            toHideInput();
+                            return ;
+                        }
+                    }
+                    $('.all_select').append(right_opt);                 
+                    toHideInput();
+                }
+            });
+            
+
+
+            //右边选择项添加到input:hide表单中
+            function toHideInput(){
+                $('.hidden_article').html('');
+                var hideHtml='';
+                $('.right_selected>option').each(function(){
+                    hideHtml+='<input type="hidden" name="article_id[]" value="'+this.value+'" />';
+                });
+                $('.hidden_article').append(hideHtml);
+            }
+
+         /*********--zTree插件--*********/
+            var ue = UE.getEditor('intro-text',{initialFrameHeight:500});
+
+        /*********--zTree插件--*********/
+                var setting={
+                    data:{
+                        simpleData:{
+                            enable: true,
+                            pIdKey: "parent_id",
+                        }
+                    },
+                    callback:{
+                        onClick:function(event, treeId, treeNode){
+                            $('.cat_name').val(treeNode.name);
+                            $('.cat_id').val(treeNode.id);
+                        },
+                        beforeClick: function(treeId, treeNode){
+                        if(treeNode.isParent){
+                            var data = {
+                                'info':'只能够选中叶子分类',
+                                'status':0
+                            }
+                                $('.alert-danger').html(data.info);
+                                $('.alert-danger').show('1200');
+                                setTimeout(function(){$('.alert-danger').hide();},1000);
+                            }
+                                return !treeNode.isParent;
+                            }
+                    }
+                    
+                };
+                var zNodes = {$catList};
+
+                var z=$.fn.zTree.init($("#ztree-me"), setting, zNodes);
+
+                <empty name='id'>
+                    var firstLeafNode = z.getNodesByFilter(function(node){
+                        return  !node.isParent;   //isParent == true: 父节点
+                    }, true); //根据过滤器找到一个节点
+                    z.selectNode(firstLeafNode);
+                    $('.cat_name').val(firstLeafNode.name);
+                    $('.cat_id').val(firstLeafNode.id);
+                <else />
+                    var goods_category_id={$goods_category_id};
+                    var parent_node=z.getNodeByParam('id', goods_category_id);
+                    z.selectNode(parent_node);
+                    $('.cat_name').val(parent_node.name);
+                    $('.cat_id').val(parent_node.id);  //真正提交给服务器的父分类id
+
+                  //编辑回显时选中商品状态
+                   var goods_status={$goods_status};
+                   var gds_status=[];
+                   if((goods_status&1)>0){
+                        gds_status.push(1);
+                   }
+                   if((goods_status&2)>0){
+                        gds_status.push(2);
+                   }
+                   if((goods_status&4)>0){
+                        gds_status.push(4);
+                   }
+                   if((goods_status&8)>0){
+                        gds_status.push(8);
+                   }
+                   if((goods_status&16)>0){
+                        gds_status.push(16);
+                   }
+                   $('.goods_status').val(gds_status);
+                   $('.upload-img-box').show();
+                </empty> 
+
+
+            ///*********--上传插件--*********/
+                $('#upload_logo').uploadify({
+                    'swf'      : '__UPLOADIFY__/uploadify.swf',  //
+                    'uploader' : "{:U('Upload/index')}",   //上传文件时使用的请求地址
+                    'width'    : 145,//指定按钮的宽度
+                    'height'    : 25,//指定按钮的宽度
+                    'buttonText': '选择图片',  //按钮上的文本
+                    'debug'     :false,   //是否调试
+                    'removeTimeout' : 1,
+                    'formData'      : {'dir' : 'goods'},  ///
+                    'multi'    : false, //该插件是否支持多文件上传
+                    'fileTypeExts' : '*.gif; *.jpg; *.png', //指定文件上传的类型
+                    'fileSizeLimit' : '2MB',  //限制上传的大小
+                    'onUploadSuccess' : function(file, data, response) {
+                        $('.upload-img-box img').attr('src','__GOODS__/'+data+'!m');
+                        $('.upload-img-box').show();  //让预览显示出来
+                        $('#logo').val(data); //将上传后的路径保存到隐藏域名中,为了表单提交时保存到数据库中
+                        // console.debug(data);
+                     },
+                    'onUploadError' : function(file, errorCode, errorMsg, errorString) {
+                         alert('上传失败!');
+                     }
+                });
+
+        //商品相册
+            ///*********--商品相册上传插件--*********/
+                $('#upload_gallery').uploadify({
+                    'swf'      : '__UPLOADIFY__/uploadify.swf',  //
+                    'uploader' : "{:U('Upload/index')}",   //上传文件时使用的请求地址
+                    'width'    : 145,//指定按钮的宽度
+                    'height'    : 25,//指定按钮的宽度
+                    'buttonText': '选择图片',  //按钮上的文本
+                    'debug'     :false,   //是否调试
+                    'removeTimeout' : 1,
+                    'formData'      : {'dir' : 'goods'},  ///
+                    'multi'    : true, //该插件是否支持多文件上传
+                    'fileTypeExts' : '*.gif; *.jpg; *.png', //指定文件上传的类型
+                    'fileSizeLimit' : '2MB',  //限制上传的大小
+                    'onUploadSuccess' : function(file, data, response) {
+                        var img_div='<div class="col-md-3 col-sm-12 col-xs-12">\
+                        <div class="panel panel-primary text-center no-boder bg-color-green">\
+                        <div class="panel-body img"><input type="hidden" name="gallery[]" value="'+data+'">\
+                        <img class="fa fa-bar-chart-o fa-5x" src="__GOODS__/'+data+'!m" style="height:180px;width:200px;"><a>X</a>\
+                        </div></div></div>';
+
+                        $(img_div).appendTo('#gallery');
+                     },
+                    'onUploadError' : function(file, errorCode, errorMsg, errorString) {
+                         alert('上传失败!');
+                     }
+                });
+
+            $('#gallery').on('click','a',function(){
+                var id=$(this).attr('dbid');
+                var atag = $(this).closest('.gallery_div');
+                if(id){
+                    $.post('{:U('deleteGallery')}',{'gallery_id':id},function(data){
+                        if(data.success){
+                            atag.closest('div').remove();
+                        }
+                    });
+                }else{
+                    atag.closest('div').remove();
+                }
+            });
+      
+         //>>添加post_json请求的响应
+          $('.post_json').click(function(){
+            var form_data=$(this).closest('form').serialize();
+            var url=$(this).closest('form').attr('action');
+            // console.debug(form_data);
+            $.post(url,form_data,function(data){
+              // console.debug(data);
+              if(data.status==0){
+                $('.error_msg').html(data.info);
+                $('.alert-danger').show();
+                setTimeout(function(){
+                  $('.alert-danger').hide();
+                },1500);
+              }else{
+                $('.success_msg').html(data.info);
+                $('.alert-success').show();
+                setTimeout(function(){
+                  location.href=data.url;
+                },1500)
+              }
+            });
+            return false;
+          });
+      });
+	</script>
+    <script type="text/javascript">
+    //选中菜单栏
+    var title=$('.title').html();
+    var a=$("#main-menu a");
+    // console.debug(title);  
+    a.each(function(){
+      if($(this).text()==title){
+        // console.debug($(this).closest('ul').closest('li'));
+        $(this).closest('ul').addClass('in');
+        $(this).closest('ul').closest('li').addClass('active');
+        $(this).addClass('active-menu');
+      }
+    });
+  </script>
+</block>

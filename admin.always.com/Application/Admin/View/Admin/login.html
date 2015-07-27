@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]> <html class="lt-ie9 lt-ie8 lt-ie7" lang="en"> <![endif]-->
+<!--[if IE 7]> <html class="lt-ie9 lt-ie8" lang="en"> <![endif]-->
+<!--[if IE 8]> <html class="lt-ie9" lang="en"> <![endif]-->
+<!--[if gt IE 8]><!--> <html lang="en"> <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <title>{:L('title')}</title>
+<link rel="stylesheet" type="text/css" href="__CSS__/login.css">
+
+</head>
+  <!--[if lt IE 9]><script src="//html5shim.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+</head>
+<body>
+  <span style='color:red'>选择语言:</span><a href="?l=en-us">english</a>&nbsp;
+<a href="?l=zh-cn">中文</a>
+  <form method="post" action="{:U()}" class="login">
+    <p>
+      <label for="login">{:L('username')}:</label>
+      <input type="text" name="username" id="login" placeholder="{:L('enter_name')}">
+    </p>
+
+    <p>
+      <label for="password">{:L('user_pass')}:</label>
+      <input type="password" name="password" id="password" placeholder="{:L('user_pass')}">
+    </p>
+
+    <p>
+      <label for="verify" style='position:'>{:L('verify')}:</label>
+      <input type="text" name="verify" id="verify" placeholder="{:L('enter_verify')}" />
+      <img class="img" src="{:U('Verify/index')}" onclick="this.src='{:U(\'Verify/index\')}?x='+Math.random()" title="点击换一张">
+    </p>
+
+    <p class="login-submit">
+      <button type="submit" class="login-button" title="登陆">登陆</button>
+    </p>
+    <p class="forgot-password"><label><input type="checkbox" name="remember">自动登陆</label></p>
+    <p class="forgot-password"><label><a href="index.html">{:L('forgot_pass')}?</a></label></p>
+  </form>
+
+<script type="text/javascript" src="__JS__/jquery-1.11.2.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,129 @@
+<extend name="Common:demo" />
+    <block name='css'>
+    <style type="text/css">
+        .uploadify{
+            background-color:#73b93d;
+        }
+    </style>
+    </block>
+<block name='main'>
+    <div class="row">
+        <div class="col-md-12">
+            <h1 class="page-header">
+                Forms Page
+                <small class="title">商品品牌编辑</small>
+            </h1>
+        </div>
+    </div>
+    <div class="panel-body">
+        <div class="alert alert-success" style="display:none"> <strong>操作成功!</strong> <em class='success_msg'>You successfully read this important alert message.</em>
+        </div>
+        <div class="alert alert-danger" style="display:none"> <strong>操作失败!</strong> <em class='error_msg'>Change a few things up and try submitting again.</em>
+        </div>
+        <form action='{:U()}' method="post">
+            <input type="hidden" name="id" value="{$id}">
+            <div class="form-group">
+                <label>品牌名称:</label>
+                <input class="form-control" placeholder="请输入品牌名称" name='name' value="{$name}"></div>
+            <div class="form-group">
+                <label>网址:</label>
+                <input class="form-control" placeholder="请输入网址" name='site_url' value="{$site_url}"></div>
+            <div class="form-group">
+                <label>LOGO:</label>
+                <input type="file" name='logo' id='upload_logo'>
+                <input type="hidden" name="logo" value="{$logo}" id="logo"></div>
+            <div class="form-group">
+            <div class="upload-img-box" style="display:none">
+                <div class="upload-pre-item">
+                    <img src="__BRAND__/{$logo}">
+                </div>
+            </div>
+                <label>描述:</label>
+                <textarea class="form-control" rows="3" name="intro">{$intro}</textarea>
+            </div>
+            <div class="form-group">
+                <label>是否显示:</label>
+                <label class="radio-inline">
+                    <input type="radio" name="status" class="optionsRadiosInline1" value="1">是</label>
+                <label class="radio-inline">
+                    <input type="radio" name="status" class="optionsRadiosInline1" value="0">否</label>
+            </div>
+            <div class="form-group">
+                <label>排序:</label>
+                <input class="form-control" placeholder="请输入排序" name='sort' value="{$sort|default=5}"></div>
+            <button type="submit" class="btn btn-default post_json">提交</button>
+        </form>
+    </div>
+    
+</block>
+    <block name='js'>
+        <script type="text/javascript" src="__JS__/jquery-1.11.2.min.js"></script>
+        <script type="text/javascript" src="__UPLOADIFY__/jquery.uploadify.min.js"></script>
+    <script type="text/javascript">
+    $(function(){
+        <notempty name='logo'>$('.upload-img-box').show();</notempty>
+
+          $('.optionsRadiosInline1').val([{$status|default=1}]);
+         //>>添加点击post_json的响应
+          $('.post_json').click(function(){
+            var form_data=$(this).closest('form').serialize();
+            var url=$(this).closest('form').attr('action');
+            console.debug(form_data);
+            $.post(url,form_data,function(data){
+              console.debug(data);
+              if(data.status==0){
+                $('.error_msg').html(data.info);
+                $('.alert-danger').show();
+                setTimeout(function(){
+                  $('.alert-danger').hide();
+                },1500);
+              }else{
+                $('.success_msg').html(data.info);
+                $('.alert-success').show();
+                setTimeout(function(){
+                  location.href=data.url;
+                },1500)
+              }
+            });
+            return false;
+          });
+      //<<上传插件
+        $('#upload_logo').uploadify({
+            'swf'      : '__UPLOADIFY__/uploadify.swf',  //
+            'uploader' : "{:U('Upload/index')}",   //上传文件时使用的请求地址
+            'width'    : 145,//指定按钮的宽度
+            'height'    : 25,//指定按钮的宽度
+            'buttonText': '选择图片',  //按钮上的文本
+            'debug'     :true,   //是否调试
+            'removeTimeout' : 1,
+            'formData'      : {'dir' : 'brand'},  ///
+            'multi'    : false, //该插件是否支持多文件上传
+            'fileTypeExts' : '*.gif; *.jpg; *.png', //指定文件上传的类型
+            'fileSizeLimit' : '2MB',  //限制上传的大小
+            'onUploadSuccess' : function(file, data, response) {
+                $('.upload-img-box img').attr('src','__BRAND__/'+data+'!min');
+                $('.upload-img-box').show();  //让预览显示出来
+                $('#logo').val(data); //将上传后的路径保存到隐藏域名中,为了表单提交时保存到数据库中
+             },
+            'onUploadError' : function(file, errorCode, errorMsg, errorString) {
+                 alert('上传失败!');
+             }
+        });
+      });
+    </script>
+    <script type="text/javascript">
+    //选中菜单栏
+    var title=$('.title').html();
+    var a=$("#main-menu a");
+    // console.debug(title);  
+    a.each(function(){
+      if($(this).text()==title){
+        // console.debug($(this).closest('ul').closest('li'));
+        $(this).closest('ul').addClass('in');
+        $(this).closest('ul').closest('li').addClass('active');
+        $(this).addClass('active-menu');
+      }
+    });
+  </script>
+
+    </block>

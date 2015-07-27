@@ -1,0 +1,162 @@
+<extend name="Common:demo" />
+<block name='css'>
+    <link rel="stylesheet" href="__ZTREE__/zTreeStyle.css" type="text/css">
+    <style type="text/css">
+        ul.ztree {
+          margin-top: 10px;
+          border: 1px solid #617775;
+          background: #f0f6e4;
+          width: 220px;
+          height: 360px;
+          overflow-y: scroll;
+          overflow-x: auto;
+        }
+    </style>
+</block>
+<block name='main'>
+    <div class="row">
+        <div class="col-md-12">
+            <h1 class="page-header">
+                Forms Page
+                <small class='title'>管理员编辑</small>
+            </h1>
+        </div>
+    </div>
+    <div class="panel-body">
+        <div class="alert alert-success" style="display:none"> <strong>操作成功!</strong> <em class='success_msg'>You successfully read this important alert message.</em>
+        </div>
+        <div class="alert alert-danger" style="display:none"> <strong>操作失败!</strong> <em class='error_msg'>Change a few things up and try submitting again.</em>
+        </div>
+        <form action='{:U()}' method="post">
+            <input type="hidden" name="id" value="{$id}">
+            <div class="form-group">
+                <label>管理员账号:</label>
+                <input class="form-control" placeholder="请输入角色名称" name='username' value="{$username}"></div>
+              <empty name='id'>
+                  <div class="form-group">
+                      <label>密码:</label>
+                      <input type="password" class="form-control" placeholder="请输入密码" name='password' value="{$password}"></div>
+                  <div class="form-group">
+                      <label>确认密码:</label>
+                      <input type="password" class="form-control" placeholder="请输入密码" name='repassword'></div>
+              </empty>
+            <div class="form-group">
+                <label>Email:</label>
+                <input class="form-control" placeholder="请输入Email" name='email' value="{$email}"></div>
+            <div class="form-group">
+                <label>角色:</label>
+                <volist name='roles'  id='role'>
+                    <label class="checkbox-inline">
+                        <input type="checkbox" class="role_id" value="{$role.id}" name="role[]">{$role.name}
+                    </label>
+                </volist>
+            </div>
+            <div class="form-group">
+                <label>额外权限:</label>
+                <div id="permission_ids"></div>
+                <ul id="ztree-me" class='ztree'></ul>
+            </div>
+            <div class="form-group">
+                <label>描述:</label>
+                <textarea class="form-control" rows="3" name="intro">{$intro}</textarea>
+            </div>
+            <div class="form-group">
+                <label>状态:</label>
+                <label class="radio-inline">
+                    <input type="radio" name="status" class="optionsRadiosInline1" value="1">是</label>
+                <label class="radio-inline">
+                    <input type="radio" name="status" class="optionsRadiosInline1" value="0">否</label>
+            </div>
+            <div class="form-group">
+                <label>排序:</label>
+                <input class="form-control" placeholder="请输入排序" name='sort' value="{$sort|default=5}"></div>
+            <button type="submit" class="btn btn-default">提交</button>
+        </form>
+    </div>
+    <script type="text/javascript" src="__JS__/jquery-1.11.2.min.js"></script>
+    <script type="text/javascript" src="__ZTREE__/jquery.ztree.core-3.5.min.js"></script>
+  <script type="text/javascript" src="__ZTREE__/jquery.ztree.excheck-3.5.js"></script>
+    <script type="text/javascript">
+        $(function(){
+            $('.optionsRadiosInline1').val([{$status|default=1}]);
+
+            //>>1.ztree设置
+          var setting = {
+              check: {
+                enable: true
+              },
+              data: {
+                  simpleData: {
+                      enable: true,
+                      pIdKey: "parent_id",
+                  }
+              },
+              callback: {
+                  onCheck:function(event, treeId, treeNode){
+                    var checkedNodes=z.getCheckedNodes(true);
+                    var permission_ids_html='';
+                    $('#permission_ids').html('');
+                    $(checkedNodes).each(function(){
+                      permission_ids_html+='<input class="form-control parent_id" name="permission_id[]" value="'+this.id+'" style="display:none">';
+                    });
+                    $('#permission_ids').append(permission_ids_html);
+                  }
+              }
+          };
+          //>>2.接受树中de数据
+          var zNodes = {$rows};
+          var zt=$.fn.zTree;
+          var z=zt.init($("#ztree-me"), setting, zNodes);
+          z.expandAll(true);
+
+          //编辑回显时
+          <notempty name='id'>
+            $('.role_id').val({$role_id});
+
+            var permission_ids={$permission_id};
+            $(permission_ids).each(function(){
+              var node=z.getNodeByParam('id', this);
+              z.checkNode(node, true, false, true);
+            });
+          </notempty>
+        
+         //>>添加点击批量删除的响应
+          $('.post_json').click(function(){
+            var form_data=$(this).closest('form').serialize();
+            var url=$(this).closest('form').attr('action');
+            console.debug(form_data);
+            $.post(url,form_data,function(data){
+              console.debug(data);
+              if(data.status==0){
+                $('.error_msg').html(data.info);
+                $('.alert-danger').show();
+                setTimeout(function(){
+                  $('.alert-danger').hide();
+                },1500);
+              }else{
+                $('.success_msg').html(data.info);
+                $('.alert-success').show();
+                setTimeout(function(){
+                  location.href=data.url;
+                },1500)
+              }
+            });
+            return false;
+          });
+        });
+    </script>
+    <script type="text/javascript">
+    //选中菜单栏
+    var title=$('.title').html();
+    var a=$("#main-menu a");
+    // console.debug(title);  
+    a.each(function(){
+      if($(this).text()==title){
+        // console.debug($(this).closest('ul').closest('li'));
+        $(this).closest('ul').addClass('in');
+        $(this).closest('ul').closest('li').addClass('active');
+        $(this).addClass('active-menu');
+      }
+    });
+  </script>
+</block>

@@ -1,0 +1,171 @@
+<extend name="Common:demo" />
+<block name='main'>
+ <div class="row">
+    <div class="col-md-12">
+        <h1 class="page-header">
+            Tables Page <small class='title'>送货方式列表</small>
+        </h1>
+    </div>
+</div>
+  <form action='{:U()}' method="get">
+    <div class="col-sm-6">
+      <div class="form-group input-group">
+          <input type="text" class="form-control" name="kw">
+          <span class="input-group-addon search" style='cursor:pointer'>搜索</span>
+      </div>
+    </div>
+  </form>
+  <div class="panel-body"> 
+    <div class="alert alert-success" style="display:none">
+      <strong>操作成功!</strong><em class='success_msg'> You successfully read this important alert message.</em>
+    </div>
+    <div class="alert alert-danger" style="display:none">
+      <strong>操作失败!</strong><em class='error_msg'> Change a few things up and try submitting again.</em>
+    </div>
+  </div>
+<div class="btn-toolbar">
+<div class="well">
+  <form action="{:U('multDelete')}" method="post" id="change-form">
+    <div class="row">
+                <div class="col-md-12">
+                    <!-- Advanced Tables -->
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                             <a href="javascript:void(0);" class="btn btn-success add-new">新增</a>
+                            <a href="javascript:void(0);" class="btn btn-success">排序</a>
+                            <a href="javascript:void(0);" class="btn btn-success post_json">批量删除</a>
+                        </div>
+                        <div class="panel-body">
+                            <div class="table-responsive">
+                                <div id="dataTables-example_wrapper" class="dataTables_wrapper form-inline" role="grid">
+                                  <div class="row">
+                                    <div class="col-sm-6">
+                                      <div class="dataTables_length" id="dataTables-example_length">
+                                        <label><select name="dataTables-example_length" aria-controls="dataTables-example" class="form-control input-sm">
+                                          <option value="10">10</option>
+                                          <option value="25">25</option>
+                                          <option value="50">50</option>
+                                          <option value="100">100</option>
+                                        </select> 个记录每页</label>
+                                      </div>
+                                    </div>
+                                  </div>
+                                <table class="table table-striped table-bordered table-hover dataTable no-footer" id="dataTables-example" aria-describedby="dataTables-example_info">
+                                    <thead>
+                                        <tr role="row">
+                                          <th class="sorting_asc" tabindex="0" aria-controls="dataTables-example" rowspan="1" colspan="1" aria-label="Rendering engine: activate to sort column ascending" style="width: 165px;" aria-sort="ascending"><input type="checkbox" name="ids" class='ids'>#</th>
+                                          <th class='sorting' tabindex='0' aria-controls='dataTables-example' rowspan='1' colspan='1' aria-label='Browser: activate to sort column ascending' style='width: 244px;'>送货方式名称</th><th class='sorting' tabindex='0' aria-controls='dataTables-example' rowspan='1' colspan='1' aria-label='Browser: activate to sort column ascending' style='width: 244px;'>价格</th><th class='sorting' tabindex='0' aria-controls='dataTables-example' rowspan='1' colspan='1' aria-label='Browser: activate to sort column ascending' style='width: 244px;'>是否默认</th><th class='sorting' tabindex='0' aria-controls='dataTables-example' rowspan='1' colspan='1' aria-label='Browser: activate to sort column ascending' style='width: 244px;'>简介</th>                                          <th class="sorting" tabindex="0" aria-controls="dataTables-example" rowspan="1" colspan="1" aria-label="CSS grade: activate to sort column ascending" style="width: 97px;" colspan="2">操作</th></tr>
+                                    </thead>
+                                    <tbody>
+                                    <volist name='rows' id='row'>
+                                      <tr class="gradeA odd">
+                                        <td class="sorting_1"><input type="checkbox" name="id[{$row.id}]" class='id'>{$row.id}</td>
+
+                                        <td class="sorting_1">{$row.name}</td><td class="sorting_1">{$row.price}</td><td class="sorting_1">{$row.is_default}</td><td class="sorting_1">{$row.intro}</td>                                        <td>
+                                            <a href="{:U('edit',array('id'=>$row['id']))}">编辑</a>
+                                            <a href="{:U('changeStatus',array('id'=>$row['id']))}" role="button" data-toggle="modal" class='get_json'>删除</a>
+                                        </td>
+                                      </tr>
+                                    </volist>
+
+                                    </tbody>
+                                </table>
+                                <div class="row">
+                                  <div class="col-sm-6">
+                                    <div class="dataTables_paginate paging_simple_numbers" id="dataTables-example_paginate">
+                                    {$html}
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!--End Advanced Tables -->
+                </div>
+            </div>
+  </form>
+  </div>
+</div>
+</block>
+<block name='js'>
+  <script type="text/javascript" src="__JS__/jquery-1.11.2.min.js"></script>
+  <script type="text/javascript">
+    $(function(){
+  //>>添加点击添加的响应
+      $('.add-new').click(function(){
+        location.href='{:U('add')}';
+      });
+  //>>添加点击批量删除的响应
+      $('.post_json').click(function(){
+        var form_data=$(this).closest('form').serialize();
+        var url=$(this).closest('form').attr('action');
+        console.debug(form_data);
+        $.post(url,form_data,function(data){
+          console.debug(data);
+          if(data.status==0){
+            $('.error_msg').html(data.info);
+            $('.alert-danger').show();
+            setTimeout(function(){
+              $('.alert-danger').hide();
+            },1500);
+          }else{
+            $('.success_msg').html(data.info);
+            $('.alert-success').show();
+            setTimeout(function(){
+              location.href=data.url;
+            },1500)
+          }
+        });
+      });
+  //>>添加点击复选框操作
+      $('.ids').click(function(){
+        $('.id').prop('checked',$('.ids').prop('checked'));
+        console.debug($('.id'));
+      });
+  //>>点击满子框,选择全选框
+      $('.id').click(function(){
+        $('.ids').prop('checked',$('.id:not(:checked)').length==0);
+      });
+  //>>点击删除操作
+      $('.get_json').click(function(){
+        var url=$(this).attr('href');
+        $.get(url,function(data){
+          console.debug(data);
+          if(data.status==0){
+            $('.error_msg').html(data.info);
+            $('.alert-danger').show();
+            setTimeout(function(){
+              $('.alert-danger').hide();
+            },1500);
+          }else{
+            $('.success_msg').html(data.info);
+            $('.alert-success').show();
+            setTimeout(function(){
+              location.href=data.url;
+            },1500)
+          }
+        });
+        return false;
+      });
+    //>>关键字搜索表单
+      $('.search').on('click',function(){
+        $(this).closest('form').submit();
+      });
+    });
+  </script>
+  <script type="text/javascript">
+    //选中菜单栏
+    var title=$('.title').html();
+    var a=$("#main-menu a");
+    // console.debug(title);  
+    a.each(function(){
+      if($(this).text()==title){
+        // console.debug($(this).closest('ul').closest('li'));
+        $(this).closest('ul').addClass('in');
+        $(this).closest('ul').closest('li').addClass('active');
+        $(this).addClass('active-menu');
+      }
+    });
+  </script>
+</block>
