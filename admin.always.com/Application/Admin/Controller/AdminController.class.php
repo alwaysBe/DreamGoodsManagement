@@ -1,7 +1,9 @@
 <?php
 namespace Admin\Controller;
 use Think\Controller;
-//管理员控制器
+/**
+ * 管理员控制器
+ */
 class AdminController extends BaseController{
 
 	//使用POST接受的所有数据

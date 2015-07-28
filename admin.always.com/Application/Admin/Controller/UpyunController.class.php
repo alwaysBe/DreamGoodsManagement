@@ -3,7 +3,7 @@ namespace Admin\Controller;
 use Think\Controller;
 use Think\Upload;
 /**
- * 文件上传控制器
+ * Upyun文件上传控制器
  */
 class UploadController extends Controller{
 	/**

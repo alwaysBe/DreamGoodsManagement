@@ -8,7 +8,7 @@ define('SRC_URL','http://admin.always.com');//服务器地址
 define('RUNTIME_PATH',ROOT_PATH.'Runtime/');//缓存目录
 define('DEFAULT_MODULE','Admin');
 
-// define('BIND_MODULE','Admin');//绑定管理模块，执行一次后请注释
+// define('BIND_MODULE','Admin');//绑定管理模块
 
 require THINK_PATH.'ThinkPHP.php';
 
